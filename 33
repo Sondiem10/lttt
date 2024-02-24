@@ -1,0 +1,139 @@
+#include<stdio.h>
+#include<string.h>
+
+void swap(int* x, int* y)
+{
+	int temp = *x;
+	*x = *y;
+	*y = temp;
+}
+
+void bubbleSort(int arr[25][2]) {
+	for (int i = 0; i < 25 - 1; i++) {
+		for (int j = 0; j < 25 - i - 1; j++) {
+			if (arr[j][1] > arr[j + 1][1]) {
+				swap(&arr[j][1], &arr[j + 1][1]);
+				swap(&arr[j][0], &arr[j + 1][0]);
+			}
+		}
+	}
+}
+
+void alpahbet_to_alphabetMatrix(int alphabetMatrix[5][5][2], int alphabet1[25][2],int  alphabet2[25][2]) {
+
+	int k = 0;
+	for (int i = 0; i < 5; i++){
+		for (int j = 0; j < 5; j++){
+			alphabetMatrix[i][j][0] = alphabet1[k][0];
+			alphabetMatrix[i][j][1] = alphabet2[k][0];
+			k++;
+		}
+	}
+}
+
+int main() {
+
+	char keyWord1[100],
+		keyWord2[100],
+		message[1000];
+	     
+
+	int alphabet1[25][2] = { 0 },
+		alphabet2[25][2] = { 0 },
+		alphabetMatrix[5][5][2] = { 0 },
+		coordinates[1000][2] = { 0 },
+		answer[1000]={0},
+		temp;
+
+	fgets(message,1000,stdin); 
+	fflush(stdin);
+	fgets(keyWord1,100,stdin);
+	fflush(stdin);
+	fgets(keyWord2,100,stdin);
+	fflush(stdin);
+
+	int lengthKey1 = strlen(keyWord1);
+	int lengthKey2 = strlen(keyWord2);
+	int lengthMessage = strlen(message);
+
+	for (int i = 0; i < 25; i++) {
+		alphabet1[i][0] = i + 97;
+		alphabet2[i][0] = i + 97;
+	}
+	for (int i = 0; i < 25; i++) {
+		alphabet1[i][1] = 25;
+		alphabet2[i][1] = 25;
+	}
+
+	for (int i = 0; i < lengthKey1; i++) {
+		if ('a' < keyWord1[i] < 'z') {
+			temp = keyWord1[i] - 97;
+			if (alphabet1[temp][1] == 25) alphabet1[temp][1] = i + 1;
+		}
+	}
+	for (int i = 0; i < lengthKey2; i++) {
+		if ('a' < keyWord2[i] < 'z') {
+			temp = keyWord2[i] - 97;
+			if (alphabet2[temp][1] == 25) alphabet2[temp][1] = i + 1;
+		}
+	}
+	for (int i = 0; i < lengthMessage; i++) {
+		if ('a' < message[i] < 'z') {
+			temp = message[i];
+			message[i] = temp;
+		}
+	}
+
+	bubbleSort(alphabet1);
+	bubbleSort(alphabet2);
+	alpahbet_to_alphabetMatrix(alphabetMatrix, alphabet1, alphabet2);
+
+	for (int k = 0; k < lengthMessage-1; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (k % 2 == 1 && message[k] == alphabetMatrix[i][j][1]) {
+					coordinates[k][0] = j;
+					coordinates[k][1] = i;
+				}
+				if (k % 2 == 0 && message[k] == alphabetMatrix[i][j][0]) {
+					coordinates[k][0] = j;
+					coordinates[k][1] = i;
+				}
+			}
+		}
+	}
+
+	for (int k = 0; k < lengthMessage - 1; k++) {
+		if (k % 2 == 0) {
+			temp = coordinates[k][0];
+			coordinates[k][0] = coordinates[k + 1][0];
+		}
+		if (k % 2 == 1) {
+			coordinates[k][0] = temp;
+		}
+	}
+
+	for (int k = 0; k < 2; k++) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				printf("%c  ", alphabetMatrix[i][j][k]);
+			}
+			printf("\n");
+		}
+		printf("\n\n");
+	}
+	printf("\n\n");
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < lengthMessage - 1; j++) {
+			printf("%d  ", coordinates[j][i]);
+		}
+		printf("\n");
+	}
+
+	for (int k = 0; k < lengthMessage - 1; k++) {
+		if (k % 2 == 0)  temp = 0;
+		else temp = 1;
+		printf("%c", alphabetMatrix[coordinates[k][1]][coordinates[k][0]][temp]);
+	}
+	return 0;
+}
